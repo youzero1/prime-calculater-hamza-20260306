@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  prime-calculator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prime-calculator
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_PATH=/app/data/prime-calculator.sqlite
+      - NEXT_PUBLIC_APP_NAME=Prime Calculator
+      - PORT=3000
+    volumes:
+      - prime_calculator_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  prime_calculator_data:
+    driver: local
